@@ -24,13 +24,15 @@ namespace Group01_PRJ.Controllers
         {
             var json = HttpContext.Session.GetString("user");
             User user = json != null ? JsonConvert.DeserializeObject<User>(json) : null;
+            if(user == null) return NotFound();
             var attendedContext = _context.Sessions
                 .Include(s => s.Class)
                 .Include(s => s.Course)
                 .Include(s => s.Room)
                 .Include(s => s.Slot)
                 .Include(s => s.User)
-                .Where(item => (item.Date==date || item.Date == new DateTime()) && (item.Userid == user.Id || user.CheckGroup("admin") || user ==null));
+                .Where(item => (item.Date==date || item.Date == new DateTime()) 
+                && (item.Userid == user.Id  || user.CheckGroup("student") || user.CheckGroup("admin") || user == null));
             ViewBag.date = date ?? DateTime.Now;
             return View(await attendedContext.ToListAsync());
         }

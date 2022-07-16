@@ -37,5 +37,17 @@ namespace Group01_PRJ.Models
             }
             return false;
         }
+
+        public bool CheckStudent(int userId)
+        {
+            foreach (UserClass userClass in Class.UserClasses)
+            {
+                if (userClass.Userid == userId)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
