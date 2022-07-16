@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Group01_PRJ.Models;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Http;
 
 namespace Group01_PRJ.Controllers
 {
@@ -20,19 +22,15 @@ namespace Group01_PRJ.Controllers
 
         public async Task<IActionResult> Index(DateTime? date)
         {
-            var attendedContext = date!=null ? _context.Sessions
+            var json = HttpContext.Session.GetString("user");
+            User user = json != null ? JsonConvert.DeserializeObject<User>(json) : null;
+            var attendedContext = _context.Sessions
                 .Include(s => s.Class)
                 .Include(s => s.Course)
                 .Include(s => s.Room)
                 .Include(s => s.Slot)
                 .Include(s => s.User)
-                .Where(item => item.Date==date) : _context.Sessions
-                .Include(s => s.Class)
-                .Include(s => s.Course)
-                .Include(s => s.Room)
-                .Include(s => s.Slot)
-                .Include(s => s.User)
-                .Where(item => item.Date == new DateTime());
+                .Where(item => (item.Date==date || item.Date == new DateTime()) && (item.Userid == user.Id || user.CheckGroup("admin") || user ==null));
             ViewBag.date = date ?? DateTime.Now;
             return View(await attendedContext.ToListAsync());
         }

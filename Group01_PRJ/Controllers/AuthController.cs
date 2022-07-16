@@ -6,6 +6,8 @@ using System.IO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
+using Microsoft.EntityFrameworkCore;
 
 namespace Group01_PRJ.Controllers
 {
@@ -29,14 +31,23 @@ namespace Group01_PRJ.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(User user)
+        public IActionResult Login(User userParam)
         {
+            User user = null;
             if (ModelState.IsValid)
             {
-               
-                if (_context.Users.FirstOrDefault(item => (item.Username == user.Username && item.Password == user.Password)) != null)
+                user = _context.Users
+                    .Include(u => u.UserGroups)
+                        .ThenInclude(g => g.Group)
+                    .FirstOrDefault(item => (item.Username == userParam.Username && item.Password == userParam.Password));
+                if (user != null)
                 {
-                    HttpContext.Session.SetString("user", user.Username);
+                    var jsonSerializerSettings = new JsonSerializerSettings
+                    {
+                        PreserveReferencesHandling = PreserveReferencesHandling.Objects
+                    };
+                    var json = JsonConvert.SerializeObject(user, jsonSerializerSettings);
+                    HttpContext.Session.SetString("user", json);
                     return RedirectToAction("Index", "Home");
                 }
                 else

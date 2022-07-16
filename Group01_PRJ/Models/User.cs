@@ -28,5 +28,18 @@ namespace Group01_PRJ.Models
         public virtual ICollection<Session> Sessions { get; set; }
         public virtual ICollection<UserClass> UserClasses { get; set; }
         public virtual ICollection<UserGroup> UserGroups { get; set; }
+
+        public bool CheckGroup(string? group)
+        {
+            if(group == null) return false;
+            foreach(UserGroup userGroup in UserGroups)
+            {
+                if(userGroup.Group.Name.ToLower() == group.ToLower())
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
