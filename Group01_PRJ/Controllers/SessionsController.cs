@@ -26,9 +26,9 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: Sessions/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? roomId, int? slotId, DateTime? date)
         {
-            if (id == null)
+            if (roomId == null || slotId==null || date==null)
             {
                 return NotFound();
             }
@@ -39,7 +39,7 @@ namespace Group01_PRJ.Controllers
                 .Include(s => s.Room)
                 .Include(s => s.Slot)
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.Roomid == id);
+                .FirstOrDefaultAsync(m => m.Roomid == roomId && m.Slotid == slotId && m.Date == date);
             if (session == null)
             {
                 return NotFound();
@@ -81,14 +81,14 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: Sessions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? roomId, int? slotId, DateTime? date)
         {
-            if (id == null)
+            if (roomId == null || slotId == null || date == null)
             {
                 return NotFound();
             }
 
-            var session = await _context.Sessions.FindAsync(id);
+            var session = await _context.Sessions.FirstAsync(m => m.Roomid == roomId && m.Slotid == slotId && m.Date == date);
             if (session == null)
             {
                 return NotFound();
@@ -106,9 +106,9 @@ namespace Group01_PRJ.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Roomid,Slotid,Date,Courseid,Userid,Classid")] Session session)
+        public async Task<IActionResult> Edit(int? roomId, int? slotId, DateTime? date, [Bind("Roomid,Slotid,Date,Courseid,Userid,Classid")] Session session)
         {
-            if (id != session.Roomid)
+            if (roomId != session.Roomid || slotId != session.Slotid || date!=session.Date)
             {
                 return NotFound();
             }
@@ -122,7 +122,7 @@ namespace Group01_PRJ.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!SessionExists(session.Roomid))
+                    if (!SessionExists(session.Roomid, session.Slotid, session.Date))
                     {
                         return NotFound();
                     }
@@ -142,9 +142,9 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: Sessions/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? roomId, int? slotId, DateTime? date)
         {
-            if (id == null)
+            if (roomId == null || slotId == null || date == null)
             {
                 return NotFound();
             }
@@ -155,7 +155,7 @@ namespace Group01_PRJ.Controllers
                 .Include(s => s.Room)
                 .Include(s => s.Slot)
                 .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.Roomid == id);
+                .FirstOrDefaultAsync(m => m.Roomid == roomId && m.Slotid == slotId && m.Date == date);
             if (session == null)
             {
                 return NotFound();
@@ -167,17 +167,17 @@ namespace Group01_PRJ.Controllers
         // POST: Sessions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? roomId, int? slotId, DateTime? date)
         {
-            var session = await _context.Sessions.FindAsync(id);
+            var session = await _context.Sessions.FirstAsync(m => m.Roomid == roomId && m.Slotid == slotId && m.Date == date);
             _context.Sessions.Remove(session);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool SessionExists(int id)
+        private bool SessionExists(int? roomId, int? slotId, DateTime? date)
         {
-            return _context.Sessions.Any(e => e.Roomid == id);
+            return _context.Sessions.Any(m => m.Roomid == roomId && m.Slotid == slotId && m.Date == date);
         }
     }
 }

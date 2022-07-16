@@ -26,9 +26,9 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: UserClasses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? classId, int? courseId, int? userId)
         {
-            if (id == null)
+            if (classId == null || courseId == null || userId == null)
             {
                 return NotFound();
             }
@@ -37,7 +37,7 @@ namespace Group01_PRJ.Controllers
                 .Include(u => u.Class)
                 .Include(u => u.Course)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Classid == id);
+                .FirstOrDefaultAsync(m => m.Classid == classId && m.Courseid==courseId && m.Userid==userId);
             if (userClass == null)
             {
                 return NotFound();
@@ -75,14 +75,14 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: UserClasses/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? classId, int? courseId, int? userId)
         {
-            if (id == null)
+            if (classId == null || courseId == null || userId == null)
             {
                 return NotFound();
             }
 
-            var userClass = await _context.UserClasses.FindAsync(id);
+            var userClass = await _context.UserClasses.FirstOrDefaultAsync(m => m.Classid == classId && m.Courseid == courseId && m.Userid == userId);
             if (userClass == null)
             {
                 return NotFound();
@@ -98,9 +98,9 @@ namespace Group01_PRJ.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Classid,Userid,Courseid")] UserClass userClass)
+        public async Task<IActionResult> Edit(int? classId, int? courseId, int? userId, [Bind("Classid,Userid,Courseid")] UserClass userClass)
         {
-            if (id != userClass.Classid)
+            if (classId != userClass.Classid || courseId != userClass.Courseid || userId!=userClass.Userid)
             {
                 return NotFound();
             }
@@ -114,7 +114,7 @@ namespace Group01_PRJ.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!UserClassExists(userClass.Classid))
+                    if (!UserClassExists(userClass.Classid, userClass.Courseid, userClass.Userid))
                     {
                         return NotFound();
                     }
@@ -132,9 +132,9 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: UserClasses/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? classId, int? courseId, int? userId)
         {
-            if (id == null)
+            if (classId == null || courseId == null || userId == null)
             {
                 return NotFound();
             }
@@ -143,7 +143,7 @@ namespace Group01_PRJ.Controllers
                 .Include(u => u.Class)
                 .Include(u => u.Course)
                 .Include(u => u.User)
-                .FirstOrDefaultAsync(m => m.Classid == id);
+                .FirstOrDefaultAsync(m => m.Classid == classId && m.Courseid == courseId && m.Userid == userId);
             if (userClass == null)
             {
                 return NotFound();
@@ -155,17 +155,17 @@ namespace Group01_PRJ.Controllers
         // POST: UserClasses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? classId, int? courseId, int? userId)
         {
-            var userClass = await _context.UserClasses.FindAsync(id);
+            var userClass = await _context.UserClasses.FirstAsync(m=> m.Classid == classId && m.Courseid == courseId && m.Userid == userId);
             _context.UserClasses.Remove(userClass);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool UserClassExists(int id)
+        private bool UserClassExists(int? classId, int? courseId, int? userId)
         {
-            return _context.UserClasses.Any(e => e.Classid == id);
+            return _context.UserClasses.Any(m => m.Classid == classId && m.Courseid == courseId && m.Userid == userId);
         }
     }
 }

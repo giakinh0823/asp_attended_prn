@@ -25,5 +25,17 @@ namespace Group01_PRJ.Models
         public virtual Slot Slot { get; set; }
         public virtual User User { get; set; }
         public virtual ICollection<Attended> Attendeds { get; set; }
+        
+        public bool checkAttend(int userId)
+        {
+            foreach(Attended at in Attendeds)
+            {
+                if(at.Userid == userId && at.Status == true)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

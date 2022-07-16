@@ -1,14 +1,11 @@
 ﻿@model IEnumerable<Group01_PRJ.Models.Session>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Attended";
 }
 
-<h1>Index</h1>
+<h1>Attended</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -25,7 +22,10 @@
                 @Html.DisplayNameFor(model => model.Slot)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.User)
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                Teacher
             </th>
             <th></th>
         </tr>
@@ -46,12 +46,13 @@
                 @Html.DisplayFor(modelItem => item.Slot.Name)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.User.Email)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new { roomId = item.Roomid, slotId = item.Slotid, date = item.Date }) |
-                @Html.ActionLink("Details", "Details", new { roomId = item.Roomid, slotId = item.Slotid, date = item.Date }) |
-                @Html.ActionLink("Delete", "Delete", new { roomId = item.Roomid, slotId = item.Slotid, date = item.Date })
+                @Html.ActionLink("Attend", "Attend", new { roomId = item.Roomid, slotId = item.Slotid, date = item.Date })
             </td>
         </tr>
 }
