@@ -19,9 +19,15 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: UserClasses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? Classid, int? Courseid)
         {
-            var attendedContext = _context.UserClasses.Include(u => u.Class).Include(u => u.Course).Include(u => u.User);
+            ViewData["Classid"] = new SelectList(_context.Classes, "Id", "Name", Classid);
+            ViewData["Courseid"] = new SelectList(_context.Courses, "Id", "Name", Courseid);
+            var attendedContext = _context.UserClasses
+                .Include(u => u.Class)
+                .Include(u => u.Course)
+                .Include(u => u.User)
+                .Where(u => (u.Classid == Classid || Classid==null) && (u.Courseid == Courseid || Courseid==null));
             return View(await attendedContext.ToListAsync());
         }
 

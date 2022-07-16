@@ -19,9 +19,22 @@ namespace Group01_PRJ.Controllers
         }
 
         // GET: Sessions
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? SlotId, int? CourseId, int? ClassId, int? RoomId)
         {
-            var attendedContext = _context.Sessions.Include(s => s.Class).Include(s => s.Course).Include(s => s.Room).Include(s => s.Slot).Include(s => s.User);
+            ViewData["Classid"] = new SelectList(_context.Classes, "Id", "Name", ClassId);
+            ViewData["Courseid"] = new SelectList(_context.Courses, "Id", "Name", CourseId);
+            ViewData["Roomid"] = new SelectList(_context.Rooms, "Id", "Name", RoomId);
+            ViewData["Slotid"] = new SelectList(_context.Slots, "Id", "Name", SlotId);
+            var attendedContext = _context.Sessions
+                .Include(s => s.Class)
+                .Include(s => s.Course)
+                .Include(s => s.Room)
+                .Include(s => s.Slot)
+                .Include(s => s.User)
+                .Where(s => (s.Slotid == SlotId || SlotId ==null)
+                && (s.Courseid == CourseId || CourseId == null)
+                && (s.Classid == ClassId || ClassId == null)
+                && (s.Roomid == RoomId || RoomId == null));
             return View(await attendedContext.ToListAsync());
         }
 

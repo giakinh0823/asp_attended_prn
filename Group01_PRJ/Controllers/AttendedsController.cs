@@ -18,9 +18,22 @@ namespace Group01_PRJ.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? date)
         {
-            var attendedContext = _context.Sessions.Include(s => s.Class).Include(s => s.Course).Include(s => s.Room).Include(s => s.Slot).Include(s => s.User);
+            var attendedContext = date!=null ? _context.Sessions
+                .Include(s => s.Class)
+                .Include(s => s.Course)
+                .Include(s => s.Room)
+                .Include(s => s.Slot)
+                .Include(s => s.User)
+                .Where(item => item.Date==date) : _context.Sessions
+                .Include(s => s.Class)
+                .Include(s => s.Course)
+                .Include(s => s.Room)
+                .Include(s => s.Slot)
+                .Include(s => s.User)
+                .Where(item => item.Date == new DateTime());
+            ViewBag.date = date ?? DateTime.Now;
             return View(await attendedContext.ToListAsync());
         }
 
